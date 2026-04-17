@@ -383,7 +383,6 @@ if file:
             chart_img_path = tmp_img.name
         except Exception as e:
             st.error(f"Bar Chart Error: {e}")
-
         # ── PIE CHART ──
         st.write("### 🥧 Pie Chart")
         pie_chart_img_path = None  # ✅ define पहले
@@ -401,12 +400,12 @@ if file:
 
                 pie_chart_img_path = tmp_img_pie.name
 
-         except Exception as e:
-             st.error(f"Pie Chart Error: {e}")
+        except Exception as e:
+            st.error(f"Pie Chart Error: {e}")
 
-     else:
-         st.warning("⚠️ No numeric columns found for charts.")
-
+    else:
+        st.warning("⚠️ No numeric columns found for charts.")
+   
     # ── AI SUMMARY (Markdown) ──
     st.write("### 💡 AI Insight")
     with st.spinner("AI 2 (Small Model) summarizing..."):
