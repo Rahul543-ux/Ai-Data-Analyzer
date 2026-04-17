@@ -399,57 +399,58 @@ if file:
         summary = ai_summary(selected_df.describe(include="all").to_string())
     st.markdown(summary)
 
-    # ── PDF EXPORT ──
-    if st.button("📄 Generate PDF Report"):
-        try:
-            tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-            doc = SimpleDocTemplate(
-                tmp_pdf.name,
-                leftMargin=0.5 * inch, rightMargin=0.5 * inch,
-                topMargin=0.5 * inch, bottomMargin=0.5 * inch
-            )
-            styles = getSampleStyleSheet()
-            content = []
+# ── PDF EXPORT ──
+if st.button("📄 Generate PDF Report"):
+    try:
+        tmp_pdf = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        doc = SimpleDocTemplate(
+            tmp_pdf.name,
+            leftMargin=0.5 * inch, rightMargin=0.5 * inch,
+            topMargin=0.5 * inch, bottomMargin=0.5 * inch
+        )
+        styles = getSampleStyleSheet()
+        content = []
 
-            # Title
-            content.append(Paragraph("🤖 AI Data Analysis Report", styles["Title"]))
-            content.append(Spacer(1, 0.15 * inch))
+        # ---------------- TITLE ----------------
+        content.append(Paragraph("🤖 AI Data Analysis Report", styles["Title"]))
+        content.append(Spacer(1, 0.2 * inch))
 
-            # AI Summary Section
-            content.append(Paragraph("Key Insights", styles["Heading2"]))
-            # Clean markdown symbols for reportlab
-            clean_summary = (
-                summary
-                .replace("**", "")
-                .replace("##", "")
-                .replace("•", "-")
-            )
-            for line in clean_summary.split("\n"):
-                line = line.strip()
-                if line:
-                    content.append(Paragraph(line, styles["Normal"]))
-            content.append(Spacer(1, 0.15 * inch))
+        # ---------------- SUMMARY ----------------
+        content.append(Paragraph("1. Key Insights", styles["Heading2"]))
 
-            # Bar Chart
-            if chart_img_path:
-                content.append(Paragraph("Data Chart", styles["Heading2"]))
-                content.append(RLImage(chart_img_path, width=6.5 * inch, height=3.2 * inch))
-                content.append(Spacer(1, 0.15 * inch))
+        clean_summary = (
+            summary
+            .replace("**", "")
+            .replace("##", "")
+            .replace("•", "-")
+        )
 
-            # Data Table
-            content.append(Paragraph("Data Table", styles["Heading2"]))
-            display_df = selected_df.head(50)  # max 50 rows in PDF
-            if len(selected_df) > 50:
-                content.append(
-                    Paragraph("(Showing first 50 rows)", styles["Normal"])
-                )
+        for line in clean_summary.split("\n"):
+            line = line.strip()
+            if line:
+                content.append(Paragraph(line, styles["Normal"]))
 
-            table_data = [display_df.columns.tolist()] + display_df.astype(str).values.tolist()
-            col_count = len(display_df.columns)
+        content.append(Spacer(1, 0.2 * inch))
+
+        # ---------------- TABLE ----------------
+        content.append(Paragraph("2. Data Table", styles["Heading2"]))
+
+        # ❌ OLD: fixed 50 rows
+        # ✅ NEW: dynamic chunk (multi-page safe)
+        rows_per_page = 40
+        total_rows = len(selected_df)
+
+        for start in range(0, total_rows, rows_per_page):
+            chunk_df = selected_df.iloc[start:start + rows_per_page]
+
+            table_data = [chunk_df.columns.tolist()] + chunk_df.astype(str).values.tolist()
+
+            col_count = len(chunk_df.columns)
             available_width = 7.0 * inch
             col_width = available_width / col_count
 
             pdf_table = Table(table_data, colWidths=[col_width] * col_count, repeatRows=1)
+
             pdf_table.setStyle(TableStyle([
                 ("BACKGROUND",    (0, 0), (-1, 0),  colors.HexColor("#4472C4")),
                 ("TEXTCOLOR",     (0, 0), (-1, 0),  colors.white),
@@ -462,16 +463,32 @@ if file:
                 ("TOPPADDING",    (0, 0), (-1, -1), 3),
                 ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
             ]))
+
             content.append(pdf_table)
+            content.append(Spacer(1, 0.2 * inch))
 
-            doc.build(content)
+        # ---------------- BAR CHART ----------------
+        if chart_img_path:
+            content.append(Paragraph("3. Bar Chart", styles["Heading2"]))
+            content.append(RLImage(chart_img_path, width=6.5 * inch, height=3.2 * inch))
+            content.append(Spacer(1, 0.2 * inch))
 
-            with open(tmp_pdf.name, "rb") as f:
-                st.download_button(
-                    "⬇️ Download PDF",
-                    f,
-                    file_name="ai_report.pdf",
-                    mime="application/pdf"
-                )
-        except Exception as e:
-            st.error(f"PDF Error: {e}")
+        # ---------------- PIE CHART ----------------
+        if pie_chart_img_path:
+            content.append(Paragraph("4. Pie Chart", styles["Heading2"]))
+            content.append(RLImage(pie_chart_img_path, width=5.5 * inch, height=3.5 * inch))
+            content.append(Spacer(1, 0.2 * inch))
+
+        # ---------------- BUILD ----------------
+        doc.build(content)
+
+        with open(tmp_pdf.name, "rb") as f:
+            st.download_button(
+                "⬇️ Download PDF",
+                f,
+                file_name="ai_report.pdf",
+                mime="application/pdf"
+            )
+
+    except Exception as e:
+        st.error(f"PDF Error: {e}")
