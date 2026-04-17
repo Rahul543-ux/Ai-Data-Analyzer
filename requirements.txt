@@ -1,0 +1,7 @@
+streamlit
+groq
+pandas
+openpyxl
+pypdf
+matplotlib
+reportlab
