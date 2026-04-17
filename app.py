@@ -195,74 +195,118 @@ def draw_bar_chart(selected_df, numeric_cols):
     plt.tight_layout()
     return fig
 
-
-
-
-
-
-
-
 # ── PIE CHART ──────────────────────────────────────────
 def draw_pie_chart(selected_df, numeric_cols):
     """
-    Pie chart:
-    - Multiple numeric cols → avg per feature (subject-wise comparison)
-    - Single numeric col    → value distribution
-    - Otherwise             → markdown message
+    Dynamic Pie chart:
+    - Multi numeric cols → feature comparison (sum based)
+    - Single numeric col → distribution (categorical safe)
+    - Otherwise → user-friendly markdown
     """
-    if len(numeric_cols) == 0:
+
+    # ---------------- FIX 1: Clean NaN ----------------
+    selected_df = selected_df.copy()
+    selected_df[numeric_cols] = selected_df[numeric_cols].apply(pd.to_numeric, errors='coerce')
+    selected_df[numeric_cols] = selected_df[numeric_cols].fillna(0)
+
+    # ---------------- VALIDATION ----------------
+    if not numeric_cols or len(numeric_cols) == 0:
         st.markdown("""
 > **ℹ️ Pie Chart nahi ban sakta**
 >
-> Selected columns mein **koi numeric column nahi** mila.
-> Numeric columns (marks, scores, etc.) select karo pie chart ke liye.
+> Koi numeric column detect nahi hua.
+> Numeric data select karo (marks, sales, etc.)
         """)
         return
 
+    # ---------------- MULTI COLUMN ----------------
     if len(numeric_cols) >= 2:
-        # Compare average per feature
-        means = selected_df[numeric_cols].mean()
-        fig, ax = plt.subplots(figsize=(7, 5))
-        wedges, texts, autotexts = ax.pie(
-            means,
-            labels=means.index,
-            autopct="%1.1f%%",
-            startangle=90,
-            pctdistance=0.80
-        )
-        for at in autotexts:
-            at.set_fontsize(8)
-        ax.set_title(
-            f"Average Score Distribution\n(Base: {', '.join(numeric_cols)})",
-            fontsize=11, fontweight="bold"
-        )
-        ax.set_ylabel("Percentage (%)", fontsize=9)
-        st.pyplot(fig)
-        plt.close(fig)
-        return
+        try:
+            values = selected_df[numeric_cols].sum()
 
-    # Single numeric column
+            # remove zero-only columns
+            values = values[values > 0]
+
+            if len(values) == 0:
+                raise ValueError("All values are zero")
+
+            fig, ax = plt.subplots(figsize=(7, 5))
+            wedges, texts, autotexts = ax.pie(
+                values,
+                labels=values.index,
+                autopct="%1.1f%%",
+                startangle=90,
+                pctdistance=0.80
+            )
+
+            for at in autotexts:
+                at.set_fontsize(8)
+
+            ax.set_title(
+                f"Feature Distribution (Base: {', '.join(values.index)})",
+                fontsize=11, fontweight="bold"
+            )
+            ax.set_ylabel("Percentage (%)", fontsize=9)
+
+            st.pyplot(fig)
+            plt.close(fig)
+            return
+
+        except Exception as e:
+            st.markdown(f"""
+> **⚠️ Pie Chart Error**
+>
+> {str(e)}
+            """)
+            return
+
+    # ---------------- SINGLE COLUMN ----------------
     col = numeric_cols[0]
-    vc = selected_df[col].value_counts()
-    unique_count = len(vc)
 
-    if unique_count <= 20:
-        fig, ax = plt.subplots(figsize=(7, 5))
-        vc.plot.pie(ax=ax, autopct="%1.1f%%", startangle=90)
-        ax.set_title(f"Distribution of '{col}'", fontsize=11, fontweight="bold")
-        ax.set_ylabel("Percentage (%)", fontsize=9)
-        st.pyplot(fig)
-        plt.close(fig)
-    else:
-        st.markdown(f"""
+    try:
+        vc = selected_df[col].value_counts()
+        vc = vc[vc > 0]
+
+        unique_count = len(vc)
+
+        if unique_count == 0:
+            raise ValueError("No valid values")
+
+        if unique_count <= 20:
+            fig, ax = plt.subplots(figsize=(7, 5))
+            ax.pie(
+                vc,
+                labels=vc.index,
+                autopct="%1.1f%%",
+                startangle=90
+            )
+
+            ax.set_title(
+                f"Distribution of '{col}'",
+                fontsize=11, fontweight="bold"
+            )
+            ax.set_ylabel("Percentage (%)", fontsize=9)
+
+            st.pyplot(fig)
+            plt.close(fig)
+
+        else:
+            st.markdown(f"""
 > **ℹ️ Pie Chart nahi ban sakta — '{col}' column se**
 >
-> Is column mein **{unique_count} unique values** hain — pie chart ke liye max **20 categories** honi chahiye.
+> {unique_count} unique values hain (max 20 allowed for clarity)
 >
-> **Kya karo:**
-> - Row filter se **data kam karo** (slider use karo)
-> - Ya koi **categorical column** select karo (e.g., grade, city, pass/fail)
-> - Ya **multiple numeric columns** select karo — tab subject-wise average pie banta hai ✅
+> **Solution:**
+> - Data filter karo
+> - Ya categorical column select karo
+> - Ya multiple features select karo
+            """)
+
+    except Exception as e:
+        st.markdown(f"""
+> **⚠️ Pie Chart Error**
+>
+> {str(e)}
         """)
 
 
