@@ -115,20 +115,23 @@ def csv_str_to_df(csv_str: str) -> pd.DataFrame:
         st.warning(f"Could not parse AI output as table: {e}")
         return pd.DataFrame({"AI_Output": [csv_str]})
 
-
 # ── BAR CHART ──────────────────────────────────────────
 def draw_bar_chart(selected_df, numeric_cols):
     """
     Grouped bar chart:
-    - X axis = Examples (rows / student names)
-    - Y axis = Value (marks/score)
-    - Each group = one row, bars = features (subjects)
-    - Feature name inside bar (vertical, white text)
-    - Value on top of bar (outside)
-    - Legend top-right
+    - X axis = Examples (rows / auto-detected labels)
+    - Y axis = Value (numeric columns)
+    - Each group = one row, bars = features
     """
-    # Find label column (string column for X axis)
+
+    # ---------------- FIX 1: Clean NaN ----------------
+    selected_df = selected_df.copy()
+    selected_df[numeric_cols] = selected_df[numeric_cols].apply(pd.to_numeric, errors='coerce')
+    selected_df[numeric_cols] = selected_df[numeric_cols].fillna(0)
+
+    # ---------------- X-axis detect ----------------
     str_cols = selected_df.select_dtypes(include="object").columns.tolist()
+
     if str_cols:
         x_labels = selected_df[str_cols[0]].astype(str).tolist()
         x_title  = str_cols[0]
@@ -136,49 +139,67 @@ def draw_bar_chart(selected_df, numeric_cols):
         x_labels = [str(i) for i in range(len(selected_df))]
         x_title  = "Index"
 
+    # ---------------- Setup ----------------
     n_rows = len(selected_df)
     n_cols = len(numeric_cols)
+
+    if n_cols == 0 or n_rows == 0:
+        raise ValueError("No valid data for bar chart")
+
     fig_width = max(14, n_rows * 1.2)
     fig, ax = plt.subplots(figsize=(fig_width, 6))
 
     x = np.arange(n_rows)
     width = 0.7 / n_cols
 
+    # ---------------- Bars ----------------
     for i, col in enumerate(numeric_cols):
-        offsets = x + i * width - (n_cols - 1) * width / 2
-        bars = ax.bar(offsets, selected_df[col], width, label=col)
+        values = selected_df[col].values
 
-        for bar in bars:
-            h = bar.get_height()
-            if h == 0:
+        offsets = x + i * width - (n_cols - 1) * width / 2
+        bars = ax.bar(offsets, values, width, label=col)
+
+        for bar, val in zip(bars, values):
+            if pd.isna(val) or val == 0:
                 continue
-            # Feature name inside bar (vertical)
+
+            # Feature name inside bar
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
-                h / 2,
-                col,
+                val / 2,
+                str(col),
                 ha="center", va="center",
                 rotation=90, fontsize=6,
                 color="white", fontweight="bold"
             )
-            # Value on top (outside)
+
+            # Value on top (safe, no int conversion)
             ax.text(
                 bar.get_x() + bar.get_width() / 2,
-                h + 0.8,
-                str(int(h)),
+                val + (abs(val) * 0.02),
+                f"{val:.2f}".rstrip('0').rstrip('.'),
                 ha="center", va="bottom",
                 fontsize=6.5, color="black"
             )
 
+    # ---------------- Labels ----------------
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels, rotation=45, ha="right", fontsize=8)
     ax.set_xlabel(x_title, fontsize=11, labelpad=8)
     ax.set_ylabel("Value / Score", fontsize=11, labelpad=8)
     ax.set_title("Feature Comparison per Example", fontsize=13, fontweight="bold", pad=12)
+
     ax.legend(title="Features", loc="upper right", fontsize=8)
-    ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+    ax.yaxis.set_major_locator(ticker.MaxNLocator())
+
     plt.tight_layout()
     return fig
+
+
+
+
+
+
 
 
 # ── PIE CHART ──────────────────────────────────────────
