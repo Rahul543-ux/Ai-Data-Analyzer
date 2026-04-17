@@ -386,12 +386,26 @@ if file:
 
         # ── PIE CHART ──
         st.write("### 🥧 Pie Chart")
+        pie_chart_img_path = None  # ✅ define पहले
+
         try:
-            draw_pie_chart(selected_df, numeric_cols)
-        except Exception as e:
-            st.error(f"Pie Chart Error: {e}")
-    else:
-        st.warning("⚠️ No numeric columns found for charts.")
+            fig_pie = draw_pie_chart(selected_df, numeric_cols)
+
+            if fig_pie:  # ✅ agar chart bana hai tabhi save karo
+                st.pyplot(fig_pie)
+
+                # Save for PDF
+                tmp_img_pie = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+                fig_pie.savefig(tmp_img_pie.name, bbox_inches="tight", dpi=120)
+                plt.close(fig_pie)
+
+                pie_chart_img_path = tmp_img_pie.name
+
+         except Exception as e:
+             st.error(f"Pie Chart Error: {e}")
+
+     else:
+         st.warning("⚠️ No numeric columns found for charts.")
 
     # ── AI SUMMARY (Markdown) ──
     st.write("### 💡 AI Insight")
