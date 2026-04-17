@@ -248,9 +248,8 @@ def draw_pie_chart(selected_df, numeric_cols):
             )
             ax.set_ylabel("Percentage (%)", fontsize=9)
 
-            st.pyplot(fig)
-            plt.close(fig)
-            return
+            
+            return fig
 
         except Exception as e:
             st.markdown(f"""
@@ -287,9 +286,7 @@ def draw_pie_chart(selected_df, numeric_cols):
             )
             ax.set_ylabel("Percentage (%)", fontsize=9)
 
-            st.pyplot(fig)
-            plt.close(fig)
-
+            return fig
         else:
             st.markdown(f"""
 > **ℹ️ Pie Chart nahi ban sakta — '{col}' column se**
@@ -309,6 +306,7 @@ def draw_pie_chart(selected_df, numeric_cols):
 > {str(e)}
         """)
 
+return None 
 
 # ── MAIN UI ────────────────────────────────────────────
 st.title("🤖 AI Data Analyzer")
