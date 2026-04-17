@@ -306,7 +306,7 @@ def draw_pie_chart(selected_df, numeric_cols):
 > {str(e)}
         """)
 
-return None 
+    return None 
 
 # ── MAIN UI ────────────────────────────────────────────
 st.title("🤖 AI Data Analyzer")
