@@ -9,7 +9,7 @@ No manual data cleaning needed — just upload and get instant insights.
 
 ## 🚀 Live Demo
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-app-link.streamlit.app)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-data-analyzer-rp.streamlit.app/)
 
 ---
 
@@ -205,9 +205,9 @@ The downloaded PDF report contains:
 
 ## 👨‍💻 Author
 
-**Rahul** — AI/ML Learner | Building real-world AI projects  
+**Rahul Prasad** — AI/ML Learner | Building real-world AI projects  
 📍 Jamshedpur, India  
-🔗 [GitHub](https://github.com/YOUR_USERNAME)
+🔗 [GitHub](https://github.com/Rahul543-ux)
 
 ---
 
