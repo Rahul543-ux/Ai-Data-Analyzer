@@ -9,6 +9,7 @@ No manual data cleaning needed — just upload and get instant insights.
 
 ## 🚀 Live Demo
 
+Click here : 👇
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ai-data-analyzer-rp.streamlit.app/)
 
 st.info("⚡ First load may take few seconds (free hosting)")
