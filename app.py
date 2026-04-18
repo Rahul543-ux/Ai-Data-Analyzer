@@ -407,7 +407,9 @@ if file:
     # ── AI SUMMARY (Markdown) ──
     st.write("### 💡 AI Insight")
     with st.spinner("AI 2 (Small Model) summarizing..."):
-        summary = ai_summary(selected_df.describe(include="all").to_string())
+        if "summary" not in st.session_state:
+            st.session_state.summary = ai_summary(selected_df.describe(include="all").to_string())
+        summary = st.session_state.summary
     st.markdown(summary)
 
 # ── PDF EXPORT ──
