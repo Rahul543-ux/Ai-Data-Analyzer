@@ -218,3 +218,10 @@ The downloaded PDF report contains:
 ## 📜 License
 
 MIT License — free to use, modify, and distribute.
+
+---
+
+## ⭐ If you like this project
+
+Give it a ⭐ on GitHub!
+
