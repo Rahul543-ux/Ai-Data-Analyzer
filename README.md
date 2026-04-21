@@ -17,6 +17,16 @@ st.info("⚡ First load may take few seconds (free hosting)")
 
 ---
 
+## 🎥 Live Demo
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=gPJeKJLKN0I">
+    <img src="https://img.youtube.com/vi/gPJeKJLKN0I/0.jpg" alt="Watch Demo" width="600"/>
+  </a>
+</p>
+
+---
+
 ## 📌 Features
 
 - ✅ Supports **CSV, Excel (.xlsx), TXT, PDF** file formats
