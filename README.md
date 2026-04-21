@@ -7,7 +7,7 @@ No manual data cleaning needed — just upload and get instant insights.
 
 ---
 
-## 🚀 Live Demo
+## 🚀 Live App Demo
 
 Click here : 👇
 
@@ -17,7 +17,11 @@ st.info("⚡ First load may take few seconds (free hosting)")
 
 ---
 
-## 🎥 Live Demo
+## 🎥 Live Video Demo
+
+[![Watch the video]
+
+**Click on the image to view the YouTube video**
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=gPJeKJLKN0I">
