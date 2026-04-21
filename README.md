@@ -31,6 +31,22 @@ st.info("⚡ First load may take few seconds (free hosting)")
 
 ---
 
+## 🎬 Project Showcase
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=gPJeKJLKN0I">
+    <img src="assets/thumbnail.png" alt="Project Demo" width="700"/>
+  </a>
+</p>
+
+<p align="center">
+  👉 Click the image to watch full demo
+</p>
+
+
+
+---
+
 ## 📌 Features
 
 - ✅ Supports **CSV, Excel (.xlsx), TXT, PDF** file formats
