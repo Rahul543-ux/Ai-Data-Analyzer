@@ -33,6 +33,8 @@ st.info("⚡ First load may take few seconds (free hosting)")
 
 ## 💼 Connect with me
 
+Click here : 👇
+
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Rahul%20Prasad-blue?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/rahul-prasad-ai)
 
 ---
