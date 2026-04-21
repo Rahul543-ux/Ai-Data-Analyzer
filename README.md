@@ -17,20 +17,6 @@ st.info("⚡ First load may take few seconds (free hosting)")
 
 ---
 
-## 🎥 Live Video Demo
-
-[![Watch the video]
-
-**Click on the image to view the YouTube video**
-
-<p align="center">
-  <a href="https://www.youtube.com/watch?v=gPJeKJLKN0I">
-    <img src="https://img.youtube.com/vi/gPJeKJLKN0I/0.jpg" alt="Watch Demo" width="600"/>
-  </a>
-</p>
-
----
-
 ## 🎬 Project Showcase
 
 <p align="center">
@@ -42,8 +28,6 @@ st.info("⚡ First load may take few seconds (free hosting)")
 <p align="center">
   👉 Click the image to watch full demo
 </p>
-
-
 
 ---
 
